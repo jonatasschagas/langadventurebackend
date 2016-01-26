@@ -1,0 +1,13 @@
+{
+  "name": "langadventurebackend",
+  "version": "0.0.1",
+  "description": "Backend from the Lang Adventure game.",
+  "author": "me",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/"
+  },
+  "dependencies": {}
+}

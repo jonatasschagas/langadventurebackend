@@ -1,0 +1,35 @@
+{
+  "name": "create",
+  "handler": "client_version/create/handler.handler",
+  "timeout": 6,
+  "memorySize": 1024,
+  "custom": {
+    "excludePatterns": [],
+    "envVars": []
+  },
+  "endpoints": [
+    {
+      "path": "client_version/create",
+      "method": "POST",
+      "authorizationType": "none",
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": {
+        "application/json": "{\"method\": \"$context.httpMethod\",\"path\": \"$context.resourcePath\",\"headers\": {#foreach ($key in $input.params().header.keySet())\"$key.toLowerCase()\": \"$input.params().header.get($key)\"#if ($foreach.hasNext),#end #end }, \"path_params\": { #foreach ($key in $input.params().path.keySet()) \"$key.toLowerCase()\": \"$input.params().path.get($key)\"#if ($foreach.hasNext),#end #end }, \"body\": $input.json('$') }"
+      },
+      "responses": {
+        "400": {
+          "statusCode": "400"
+        },
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {},
+          "responseModels": {},
+          "responseTemplates": {
+            "application/json": ""
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "client_version",
+  "version": "0.0.1",
+  "profile": "aws-v0.1.5",
+  "location": "https://github.com/...",
+  "author": "",
+  "description": "A Serverless Module",
+  "custom": {},
+  "cloudFormation": {
+    "resources": {},
+    "lambdaIamPolicyDocumentStatements": [ 
+        { "Sid": "Stmt1438940167000", "Effect": "Allow", "Action": [ "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:PutItem", "dynamodb:UpdateTable", "dynamodb:UpdateItem", "dynamodb:Query"], "Resource": [ "arn:aws:dynamodb:us-east-1:117472117844:table/ClientVersion" ]}
+    ]
+  }
+}
