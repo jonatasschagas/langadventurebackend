@@ -1,6 +1,6 @@
 {
-    "method": "POST",
-    "path": "/client_version/create",
+    "method": "GET",
+    "path": "/client_version/list",
     "headers": {
         "accept": "*/*",
         "accept-encoding": "gzip, deflate",
@@ -18,8 +18,5 @@
         "x-forwarded-proto": "https"
     },
     "path_params": {},
-    "body": {
-        "active": true,
-        "alias": "v1.0.0"
-    }
+    "body": {}
 }
