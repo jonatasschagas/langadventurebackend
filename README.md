@@ -2,11 +2,15 @@
 
 # Deploying function/endpoint
 
-Go to the function folder and run:
+Go to the function folder and run the commands below.
 
+Function:
 ``
     serverless function deploy
-    
+``
+
+Endpoint:
+``
     serverless endpoint deploy
 ``
 
