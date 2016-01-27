@@ -6,6 +6,7 @@ Go to the function folder and run:
 
 ``
     serverless function deploy
+    
     serverless endpoint deploy
 ``
 
