@@ -109,6 +109,10 @@ function update(tableName, key, valuesToUpdate, callback) {
     });
 }
 
+function list(callback) {
+
+}
+
 module.exports = {
     save: save,
     get: get,
