@@ -1,22 +1,31 @@
 'use strict';
 
 /**
- * Serverless Module: Lambda Handler
- * - Your lambda functions should be a thin wrapper around your own separate
- * modules, to keep your code testable, reusable and AWS independent
- * - 'serverless-helpers-js' module is required for Serverless ENV var support.  Hopefully, AWS will add ENV support to Lambda soon :)
+ * This Lambda Function returns the list of registered AdminUsers
+ * @type {*|exports|module.exports}
  */
-
-// Require Serverless ENV vars
-var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
 
 // Require Logic
 var lib = require('../../lib');
 
 // Lambda Handler
-module.exports.handler = function(event, context) {
+module.exports.handler = function (event, context) {
 
-  lib.respond(event, function(error, response) {
-    return context.done(error, response);
+  console.log('Fetching admin users: ');
+  lib.list('AdminUser', 'fbUserId,userName,lastLogin,userRoles', function (response) {
+    if (response.success && response.data) {
+      var items = response.data;
+      if(!items) {
+        items = [];
+      }
+      context.done(null, {
+        'success': true,
+        'message': 'Admin users were fetched successfully.',
+        'data': {'items': items}
+      });
+    } else {
+      context.done(null, {'success': false, 'message': 'Unable to fetch admin users.'});
+    }
   });
+
 };

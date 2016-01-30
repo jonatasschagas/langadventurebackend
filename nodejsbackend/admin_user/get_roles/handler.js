@@ -25,14 +25,14 @@ module.exports.handler = function (event, context) {
     console.log('Fetching roles from admin user: ' + fbUserId);
     lib.get('AdminUser', fbUserId, function (response) {
         if (response.success && response.data) {
-            var roles = response.data.Item.roles;
+            var roles = response.data.Item.UserRoles;
             if(!roles) {
                 roles = [];
             }
             context.done(null, {
                 'success': true,
                 'message': 'Roles were fetched successfully.',
-                'data': {'roles': roles}
+                'data': {'userRoles': roles}
             });
         } else {
             context.done(null, {'success': false, 'message': 'Unable to fetch admin user roles.'});

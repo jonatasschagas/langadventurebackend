@@ -8,7 +8,9 @@
  */
 
 var AWS = require('aws-sdk');
-
+AWS.config.update({
+    region: "us-east-1"
+});
 /**
  * Saves the item to DynamoDB
  * @param tableName
@@ -59,7 +61,11 @@ function get(tableName, key, callback) {
             callback({'success': false, 'message': 'Error fetching item from table: ' + tableName});
         } else {
             console.log('Record fetched successfully.');
-            callback({'success': true, 'message': 'Record fetched successfully.', 'data': data});
+            if(Object.keys(data).length > 0) {
+                callback({'success': true, 'message': 'Record fetched successfully.', 'data': data});
+            } else {
+                callback({'success': true, 'message': 'Record fetched successfully.', 'data': null});
+            }
         }
     });
 }
@@ -81,8 +87,12 @@ function update(tableName, key, valuesToUpdate, callback) {
     for (var attributeName in valuesToUpdate) {
         if (valuesToUpdate.hasOwnProperty(attributeName)) {
             var paramPlaceHolder = ':' + String.fromCharCode(97 + i);
+            if (i > 0) {
+                updateExpression += ',';
+            }
             updateExpression += attributeName + ' = ' + paramPlaceHolder + ' ';
             expressionAttributeValues[paramPlaceHolder] = valuesToUpdate[attributeName];
+            i++;
         }
     }
 
@@ -109,12 +119,36 @@ function update(tableName, key, valuesToUpdate, callback) {
     });
 }
 
-function list(callback) {
+/**
+ * Scans ALL the items from the DynamoDB table
+ * @param tableName
+ * @param fieldsToFetch
+ * @param callback
+ */
+function list(tableName, fieldsToFetch, callback) {
 
+    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+
+    var query = {
+        TableName: tableName,
+        ProjectionExpression: fieldsToFetch
+    };
+
+    console.log('Scanning table: ' + tableName + ', fields to fetch: ' + fieldsToFetch);
+    dynamoDbClient.scan(query, function (err, data) {
+        if (err) {
+            console.log('Error scanning table: ' + err);
+            callback({'success': false, 'message': 'Unable to list table: ' + tableName});
+        } else {
+            console.log('Records fetched successfully..');
+            callback({'success': true, 'message': 'Records fetched successfully..', 'data': data.Items});
+        }
+    });
 }
 
 module.exports = {
     save: save,
     get: get,
-    update: update
+    update: update,
+    list: list
 };
