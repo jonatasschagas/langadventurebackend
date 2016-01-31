@@ -39,9 +39,6 @@ module.exports.handler = function (event, context) {
         if (response.success && response.data) {
             console.log('Updating user: ' + userName);
             var userRoles = response.data.Item.UserRoles;
-            if (!userRoles) {
-                userRoles = [];
-            }
             lib.update('AdminUser', fbUserId, {
                 'LastLogin': now.toDateString(),
                 'UserName': userName
@@ -61,13 +58,18 @@ module.exports.handler = function (event, context) {
             lib.save(
                 'AdminUser',
                 {
-                    'Key': fbUserId,
+                    'ID': fbUserId,
                     'UserName': userName,
-                    'CreatedDate': now.toDateString()
+                    'CreatedDate': now.toDateString(),
+                    'UserRoles': []
                 },
                 function (success) {
                     if (success) {
-                        context.done(null, {'success': true, 'message': 'User registered successfully.'});
+                        context.done(null, {
+                            'success': true,
+                            'message': 'User registered successfully.',
+                            'data': {'userRoles': []}
+                        });
                     } else {
                         context.done(null, {'success': false, 'message': 'Error registering user'});
                     }

@@ -12,7 +12,7 @@ var lib = require('../../lib');
 module.exports.handler = function (event, context) {
 
     console.log('Fetching admin users: ');
-    lib.list('AdminUser', 'UserName,LastLogin,UserRoles', function (response) {
+    lib.list('AdminUser', 'ID,UserName,LastLogin,UserRoles', function (response) {
         console.log(response);
         if (response.success && response.data) {
             var items = response.data;

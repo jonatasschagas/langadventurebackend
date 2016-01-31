@@ -49,7 +49,7 @@ function get(tableName, key, callback) {
     var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
     var params = {
         Key: {
-            'Key': key
+            'ID': key
         },
         TableName: tableName
     };
@@ -98,7 +98,7 @@ function update(tableName, key, valuesToUpdate, callback) {
 
     var params = {
         Key: {
-            'Key': key
+            'ID': key
         },
         TableName: tableName,
         UpdateExpression: updateExpression,
