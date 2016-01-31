@@ -35,15 +35,23 @@ module.exports.handler = function (event, context) {
     }
 
     lib.get('AdminUser', fbUserId, function (response) {
-        console.log('get resp: ' + JSON.stringify(response));
+        console.log('get response: ' + JSON.stringify(response));
         if (response.success && response.data) {
             console.log('Updating user: ' + userName);
+            var userRoles = response.data.Item.UserRoles;
+            if (!userRoles) {
+                userRoles = [];
+            }
             lib.update('AdminUser', fbUserId, {
                 'LastLogin': now.toDateString(),
                 'UserName': userName
             }, function (success) {
                 if (success) {
-                    context.done(null, {'success': true, 'message': 'User registered successfully.'});
+                    context.done(null, {
+                        'success': true,
+                        'message': 'User registered successfully.',
+                        'data': {'userRoles': userRoles}
+                    });
                 } else {
                     context.done(null, {'success': false, 'message': 'Error registering user'});
                 }
