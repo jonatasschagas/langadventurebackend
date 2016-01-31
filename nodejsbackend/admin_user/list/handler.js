@@ -12,7 +12,8 @@ var lib = require('../../lib');
 module.exports.handler = function (event, context) {
 
   console.log('Fetching admin users: ');
-  lib.list('AdminUser', 'fbUserId,userName,lastLogin,userRoles', function (response) {
+  lib.list('AdminUser', 'UserName,LastLogin,UserRoles', function (response) {
+    console.log(response);
     if (response.success && response.data) {
       var items = response.data;
       if(!items) {
