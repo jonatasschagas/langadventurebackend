@@ -61,7 +61,7 @@ function get(tableName, key, callback) {
             callback({'success': false, 'message': 'Error fetching item from table: ' + tableName});
         } else {
             console.log('Record fetched successfully.');
-            if(Object.keys(data).length > 0) {
+            if (Object.keys(data).length > 0) {
                 callback({'success': true, 'message': 'Record fetched successfully.', 'data': data});
             } else {
                 callback({'success': true, 'message': 'Record fetched successfully.', 'data': null});
@@ -146,9 +146,17 @@ function list(tableName, fieldsToFetch, callback) {
     });
 }
 
+function guid() {
+    var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
 module.exports = {
     save: save,
     get: get,
     update: update,
-    list: list
+    list: list,
+    guid: guid
 };
