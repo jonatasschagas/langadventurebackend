@@ -141,11 +141,38 @@ function list(tableName, fieldsToFetch, callback) {
             callback({'success': false, 'message': 'Unable to list table: ' + tableName});
         } else {
             console.log('Records fetched successfully..');
-            callback({'success': true, 'message': 'Records fetched successfully..', 'data': data.Items});
+            callback({'success': true, 'message': 'Records fetched successfully.', 'data': data.Items});
         }
     });
 }
 
+function deleteItem(tableName, key, callback) {
+
+    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+
+    var deleteQuery = {
+        TableName: tableName,
+        Key: {
+            'ID': key
+        }
+    };
+
+    console.log('Deleting record ' + key + ' from table: ' + tableName);
+    dynamoDbClient.delete(deleteQuery, function (err, data) {
+        if (err) {
+            console.log('Error delete item from table: ' + err);
+            callback({'success': false, 'message': 'Unable to delete record.'});
+        } else {
+            console.log('Record deleted successfully..');
+            callback({'success': true, 'message': 'Records deleted successfully.'});
+        }
+    });
+}
+
+/**
+ * Generates a random UUID
+ * @returns {string}
+ */
 function guid() {
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -158,5 +185,6 @@ module.exports = {
     get: get,
     update: update,
     list: list,
+    deleteItem: deleteItem,
     guid: guid
 };
