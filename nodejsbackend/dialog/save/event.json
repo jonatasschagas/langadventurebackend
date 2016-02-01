@@ -1,6 +1,8 @@
 {
   "id": "1b74bf34-67e5-7700-3e95-c2c31301a603",
   "title": "Leve1/airport/officer/help",
+  "storyId": "DASDASD-DASDASD-ASDASDA",
+  "whoStarts": "player",
   "nodes": [
     {
       "text": "node1",

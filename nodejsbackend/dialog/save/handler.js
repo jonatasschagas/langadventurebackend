@@ -22,14 +22,16 @@ module.exports.handler = function (event, context) {
 
     var id = event['id'];
     var title = event['title'];
+    var storyId = event['storyId'];
+    var whoStarts = event['whoStarts'];
     var nodes = event['nodes'];
     var now = new Date();
 
-    if (!title || !nodes) {
-        console.log('Error saving/updating dialog. Please provide a title and the dialog nodes.');
+    if (!title || !storyId || !whoStarts || !nodes) {
+        console.log('Error saving/updating dialog. Please provide a title, story, who starts and the dialog nodes.');
         context.done(null, {
             'success': false,
-            'message': 'Error saving/updating dialog. Please provide a title and the dialog nodes.'
+            'message': 'Error saving/updating dialog. Please provide a title, story, who starts and the dialog nodes.'
         });
         return
     }
@@ -42,6 +44,8 @@ module.exports.handler = function (event, context) {
                 lib.update('Dialog', id, {
                     'LastUpdated': now.toDateString(),
                     'Title': title,
+                    'StoryId': storyId,
+                    'WhoStarts': whoStarts,
                     'Nodes': nodes
                 }, function (success) {
                     if (success) {
@@ -64,8 +68,10 @@ module.exports.handler = function (event, context) {
             {
                 'ID': lib.guid(),
                 'Title': title,
+                'StoryId': storyId,
+                'WhoStarts': whoStarts,
                 'CreatedDate': now.toDateString(),
-                'LastUpdate': now.toDateString(),
+                'LastUpdated': now.toDateString(),
                 'Nodes': nodes
             },
             function (success) {
