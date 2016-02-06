@@ -5,38 +5,34 @@
  * @type {*|exports|module.exports}
  */
 
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
+    utils.log('fetching roles: ', event);
+
     var fbUserId = event['fbUserId'];
 
-    if (!fbUserId) {
-        console.log('Error fetching admin user roles. Please provide a Facebook User Id (fbUserId).');
-        context.done(null, {
-            'success': false,
-            'message': 'Error fetching admin user roles. Please provide a Facebook User Id (fbUserId).'
-        });
-        return
+    if (_.isEmpty(fbUserId)) {
+        utils.error(context,
+            'Admin User',
+            'get roles',
+            'Please provide a Facebook User Id (fbUserId).', null);
+        return;
     }
 
     console.log('Fetching roles from admin user: ' + fbUserId);
-    lib.get('AdminUser', fbUserId, function (response) {
-        if (response.success && response.data) {
-            var roles = response.data.Item.UserRoles;
-            if(!roles) {
-                roles = [];
-            }
-            context.done(null, {
-                'success': true,
-                'message': 'Roles were fetched successfully.',
-                'data': {'userRoles': roles}
-            });
+    db.get('AdminUser', fbUserId).then(function (response) {
+        utils.log('db response: ', response);
+        if (!_.isEmpty(response.Item)) {
+            utils.success(context, 'roles', 'fetch', {'userRoles': response.Item.UserRoles});
         } else {
-            context.done(null, {'success': false, 'message': 'Unable to fetch admin user roles.'});
+            utils.error(context, 'roles', 'fetch', 'Unable to find a user.', null);
         }
+    }).catch(function (e) {
+        utils.error(context, 'roles', 'fetch', 'Unable to find a user.', e);
     });
-
 };

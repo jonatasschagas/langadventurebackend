@@ -5,36 +5,31 @@
  * @type {*|exports|module.exports}
  */
 
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-    // logging event
-    console.log(JSON.stringify(event));
+    utils.log('Delete story:', event);
 
     var id = event['id'];
-    if (!id) {
-        console.log('Error deleting story. Please provide an id.');
-        context.done(null, {
-            'success': false,
-            'message': 'Error deleting story. Please provide an id.'
-        });
+    if (_.isEmpty(id)) {
+        utils.error(context, 'Story', 'deleting', 'Please provide an id.', null);
         return
     }
 
     console.log('Deleting story id: ' + id);
-    lib.deleteItem('Story', id, function (response) {
-        console.log(response);
-        if (response.success) {
-            context.done(null, {
-                'success': true,
-                'message': 'Story was deleted successfully.'
-            });
-        } else {
-            context.done(null, {'success': false, 'message': 'Unable to delete story.'});
-        }
+    db.deleteItem('Story', id).then(function (response) {
+        utils.success(context, 'Story', 'deleting', null);
+    }).catch(function (e) {
+        utils.success(context, 'Story', 'deleting', null);
+        utils.error(
+            context,
+            'Story',
+            'deleting',
+            'Error deleting story from the database.',
+            e);
     });
-
 };

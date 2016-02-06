@@ -7,18 +7,14 @@
  * @type {AWS|exports|module.exports}
  */
 
-var AWS = require('aws-sdk');
-AWS.config.update({
-    region: 'us-east-1'
-});
-
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
-    // logging event
-    console.log(JSON.stringify(event));
+
+    utils.log('saving story: ', event);
 
     var id = event['id'];
     var title = event['title'];
@@ -26,60 +22,67 @@ module.exports.handler = function (event, context) {
     var translatedLanguage = event['translatedLanguage'];
     var now = new Date();
 
-    if (!title || !targetLanguage || !translatedLanguage) {
-        console.log('Error saving/updating story. Please provide a title, target language and translated language.');
-        context.done(null, {
-            'success': false,
-            'message': 'Error saving/updating story. Please provide a title, target language and translated language.'
-        });
-        return
+    if (_.isEmpty(title) ||
+        _.isEmpty(targetLanguage) ||
+        _.isEmpty(translatedLanguage)) {
+        utils.error(
+            context,
+            'Story',
+            'saved',
+            'Please provide a title, target language and translated language.',
+            null
+        );
+        return;
     }
 
-    if (id) {
-        lib.get('Story', id, function (response) {
-            console.log('get response: ' + JSON.stringify(response));
-            if (response.success && response.data) {
-                console.log('Updating story: ' + title);
-                lib.update('Story', id, {
-                    'LastUpdated': now.toDateString(),
-                    'Title': title,
-                    'TargetLanguage': targetLanguage,
-                    'TranslatedLanguage': translatedLanguage
-                }, function (success) {
-                    if (success) {
-                        context.done(null, {
-                            'success': true,
-                            'message': 'Story updated successfully.'
-                        });
-                    } else {
-                        context.done(null, {'success': false, 'message': 'Error saving/updating story.'});
-                    }
-                });
-            } else {
-                context.done(null, {'success': false, 'message': 'Error saving/updating story'});
+    if (!_.isEmpty(id)) {
+        db.saveOrUpdate('Story', id, {
+            'LastUpdated': now.toDateString(),
+            'Title': title,
+            'TargetLanguage': targetLanguage,
+            'TranslatedLanguage': translatedLanguage
+        }).then(
+            utils.success(
+                context,
+                'Story',
+                'updated',
+                {}
+            )
+        ).catch(
+            function (e) {
+                utils.error(
+                    context,
+                    'Story',
+                    'updating',
+                    'Error updating the story in the database.',
+                    e
+                )
             }
-        });
+        );
     } else {
-        console.log('Saving new story: ' + title);
-        lib.save(
-            'Story',
-            {
-                'ID': lib.guid(),
-                'Title': title,
-                'TargetLanguage': targetLanguage,
-                'TranslatedLanguage': translatedLanguage,
-                'CreatedDate': now.toDateString(),
-                'LastUpdated': now.toDateString()
-            },
-            function (success) {
-                if (success) {
-                    context.done(null, {
-                        'success': true,
-                        'message': 'Story saved successfully.'
-                    });
-                } else {
-                    context.done(null, {'success': false, 'message': 'Error saving story'});
-                }
+        db.saveOrUpdate('Story', id, {
+            'ID': db.guid(),
+            'Title': title,
+            'TargetLanguage': targetLanguage,
+            'TranslatedLanguage': translatedLanguage,
+            'CreatedDate': now.toDateString(),
+            'LastUpdated': now.toDateString()
+        }).then(
+            utils.success(
+                context,
+                'Story',
+                'saving',
+                {}
+            )
+        ).catch(
+            function (e) {
+                utils.error(
+                    context,
+                    'Story',
+                    'saving',
+                    'Error saving the story in the database.',
+                    e
+                )
             }
         );
     }

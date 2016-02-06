@@ -1,5 +1,6 @@
 /**
- * Lib
+ * dynamo-db-utils: Encapsulates all the functions related to
+ * DynamoDB.
  */
 
 /**
@@ -7,67 +8,52 @@
  *  - http://docs.aws.amazon.com/amazondynamodb/latest/gettingstartedguide/GettingStarted.NodeJs.03.html
  */
 
+var _ = require('lodash-node');
+var Promise = require("bluebird");
 var AWS = require('aws-sdk');
+var utils = require('./utils')
 AWS.config.update({
     region: "us-east-1"
 });
+
+/**
+ * Creates the connection to DynamoDB and promisifies the connection object.
+ * @returns {*}
+ */
+function getDynamoDbClient() {
+    return Promise.promisifyAll(new AWS.DynamoDB.DocumentClient());
+}
+
 /**
  * Saves the item to DynamoDB
  * @param tableName
  * @param valuesToSave
- * @param callback
  */
-function save(tableName, valuesToSave, callback) {
-
-    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-
+function save(tableName, valuesToSave) {
+    var dynamoDbClient = getDynamoDbClient();
     var insertRecord = {
         TableName: tableName,
         Item: valuesToSave
     };
-
     console.log('saving to table: ' + tableName + ', item: ' + JSON.stringify(valuesToSave));
-    dynamoDbClient.put(insertRecord, function (err, data) {
-        if (err) {
-            console.log('Error saving record: ' + err);
-            callback(false);
-        } else {
-            console.log('Record saved successfully.');
-            callback(true);
-        }
-    });
+    return dynamoDbClient.putAsync(insertRecord);
 }
 
 /**
  * Fetches from the given DynamoDB Table the record. The key must be a string.
  * @param tableName
  * @param key
- * @param callback
  */
-function get(tableName, key, callback) {
-
-    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+function get(tableName, key) {
+    var dynamoDbClient = getDynamoDbClient();
     var params = {
         Key: {
             'ID': key
         },
         TableName: tableName
     };
-
     console.log('Fetching Item: ' + key + ', from table: ' + tableName + '.');
-    dynamoDbClient.get(params, function (err, data) {
-        if (err) {
-            console.log('Error fetching record: ' + err + '. Response: ' + data);
-            callback({'success': false, 'message': 'Error fetching item from table: ' + tableName});
-        } else {
-            console.log('Record fetched successfully.');
-            if (Object.keys(data).length > 0) {
-                callback({'success': true, 'message': 'Record fetched successfully.', 'data': data});
-            } else {
-                callback({'success': true, 'message': 'Record fetched successfully.', 'data': null});
-            }
-        }
-    });
+    return dynamoDbClient.getAsync(params);
 }
 
 /**
@@ -75,12 +61,9 @@ function get(tableName, key, callback) {
  * @param tableName
  * @param key
  * @param valuesToUpdate
- * @param callback
  */
-function update(tableName, key, valuesToUpdate, callback) {
-
-    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-
+function update(tableName, key, valuesToUpdate) {
+    var dynamoDbClient = getDynamoDbClient();
     var updateExpression = 'set ';
     var expressionAttributeValues = {};
     var i = 0;
@@ -95,7 +78,6 @@ function update(tableName, key, valuesToUpdate, callback) {
             i++;
         }
     }
-
     var params = {
         Key: {
             'ID': key
@@ -104,69 +86,73 @@ function update(tableName, key, valuesToUpdate, callback) {
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionAttributeValues
     };
-
     console.log('Updating the record from table: ' + tableName
         + '. Update Exp: ' + updateExpression
         + ', Expression Value Attr: ' + JSON.stringify(expressionAttributeValues));
-    dynamoDbClient.update(params, function (err, data) {
-        if (err) {
-            console.log('Unable to update record: ' + err);
-            callback(false);
-        } else {
-            console.log('Record updated successfully.');
-            callback(true);
-        }
-    });
+    return dynamoDbClient.updateAsync(params);
 }
 
 /**
  * Scans ALL the items from the DynamoDB table
  * @param tableName
  * @param fieldsToFetch
- * @param callback
  */
-function list(tableName, fieldsToFetch, callback) {
-
-    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-
+function list(tableName, fieldsToFetch) {
+    var dynamoDbClient = getDynamoDbClient();
     var query = {
         TableName: tableName,
         ProjectionExpression: fieldsToFetch
     };
-
     console.log('Scanning table: ' + tableName + ', fields to fetch: ' + fieldsToFetch);
-    dynamoDbClient.scan(query, function (err, data) {
-        if (err) {
-            console.log('Error scanning table: ' + err);
-            callback({'success': false, 'message': 'Unable to list table: ' + tableName});
-        } else {
-            console.log('Records fetched successfully..');
-            callback({'success': true, 'message': 'Records fetched successfully.', 'data': data.Items});
-        }
-    });
+    return dynamoDbClient.scanAsync(query);
 }
 
-function deleteItem(tableName, key, callback) {
-
-    var dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-
+/**
+ * Deletes the item from DynamoDB
+ * @param tableName
+ * @param key
+ * @returns {*}
+ */
+function deleteItem(tableName, key) {
+    var dynamoDbClient = getDynamoDbClient();
     var deleteQuery = {
         TableName: tableName,
         Key: {
             'ID': key
         }
     };
-
     console.log('Deleting record ' + key + ' from table: ' + tableName);
-    dynamoDbClient.delete(deleteQuery, function (err, data) {
-        if (err) {
-            console.log('Error delete item from table: ' + err);
-            callback({'success': false, 'message': 'Unable to delete record.'});
-        } else {
-            console.log('Record deleted successfully..');
-            callback({'success': true, 'message': 'Records deleted successfully.'});
-        }
-    });
+    return dynamoDbClient.deleteAsync(deleteQuery);
+}
+
+/**
+ * Saves or updates the items in DynamoDB. Returns a promise.
+ * @param tableName
+ * @param id
+ * @param fields
+ */
+function saveOrUpdate(tableName, id, fields) {
+    if (!_.isEmpty(id)) {
+        get(tableName, id).then(function (getResponse) {
+            utils.log('get response: ', getResponse);
+            if (!_.isEmpty(getResponse.Item) && !_.isEmpty(getResponse.Item.ID)) {
+                utils.log('updating record: ' ,fields);
+                update(tableName, id, fields).then(function (updateResponse) {
+                    utils.log('response from DB: ', updateResponse);
+                    return Promise.resolve(getResponse);
+                }).catch(function (e) {
+                    return Promise
+                        .reject(new Error(
+                            'Error registering access to the database.', e));
+                });
+            } else {
+                console.log('Registering new user: ' + userName);
+                return save(tableName, fields);
+            }
+        });
+    } else {
+        return save(tableName, fields);
+    }
 }
 
 /**
@@ -186,5 +172,6 @@ module.exports = {
     update: update,
     list: list,
     deleteItem: deleteItem,
+    saveOrUpdate: saveOrUpdate,
     guid: guid
 };

@@ -7,43 +7,41 @@
  * @type {AWS|exports|module.exports}
  */
 
-var AWS = require('aws-sdk');
-AWS.config.update({
-    region: 'us-east-1'
-});
-
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
     // logging event
-    console.log(JSON.stringify(event));
+    utils.log('update roles:', event)
 
     var roles = event['roles'];
     var fbUserId = event['fbUserId'];
 
-    if (!fbUserId || !roles) {
-        console.log('Error updating user\'s roles. Please provide a facebook User Id and an array of roles.');
-        context.done(null, {
-            'success': false,
-            'message': 'Error updating user\'s roles. Please provide a facebook User Id and an array of roles.'
-        });
-        return
+    if (_.isEmpty(fbUserId) || _.isEmpty(roles)) {
+        utils.error(
+            context,
+            'Admin User',
+            'update',
+            'Please provide a facebook User Id and an array of roles.',
+            null
+        );
+        return;
     }
 
-    console.log('Updating user: ' + fbUserId);
-    lib.update('AdminUser', fbUserId, {
+    utils.log('Updating user: ', fbUserId);
+    db.update('AdminUser', fbUserId, {
         'UserRoles': roles
-    }, function (success) {
-        if (success) {
-            context.done(null, {
-                'success': true,
-                'message': 'User\'s roles updated successfully.'
-            });
-        } else {
-            context.done(null, {'success': false, 'message': 'Error updating user\'s roles.'});
-        }
+    }).then(function (response) {
+        utils.success(context, 'Admin User', 'updated', null);
+    }).catch(function (e) {
+        utils.error(
+            context,
+            'Admin User',
+            'updated',
+            'Unable to update user\'s roles.',
+            e
+        );
     });
-
 };

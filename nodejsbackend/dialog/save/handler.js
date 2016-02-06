@@ -7,18 +7,15 @@
  * @type {AWS|exports|module.exports}
  */
 
-var AWS = require('aws-sdk');
-AWS.config.update({
-    region: 'us-east-1'
-});
-
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
+
     // logging event
-    console.log(JSON.stringify(event));
+    utils.log('dialog saving: ', event);
 
     var id = event['id'];
     var title = event['title'];
@@ -27,63 +24,63 @@ module.exports.handler = function (event, context) {
     var nodes = event['nodes'];
     var now = new Date();
 
-    if (!title || !storyId || !whoStarts || !nodes) {
-        console.log('Error saving/updating dialog. Please provide a title, story, who starts and the dialog nodes.');
-        context.done(null, {
-            'success': false,
-            'message': 'Error saving/updating dialog. Please provide a title, story, who starts and the dialog nodes.'
-        });
-        return
+    if (_.isEmpty(title) || _.isEmpty(storyId)
+        || _.isEmpty(whoStarts) || _.isEmpty(nodes)) {
+        utils.error(
+            context,
+            'Dialog',
+            'saving/updating',
+            'Please provide a title, story, who starts the dialog and the dialog nodes.',
+            null
+        );
+        return;
     }
 
-    if (id) {
-        lib.get('Dialog', id, function (response) {
-            console.log('get response: ' + JSON.stringify(response));
-            if (response.success && response.data) {
-                console.log('Updating dialog: ' + title);
-                lib.update('Dialog', id, {
-                    'LastUpdated': now.toDateString(),
-                    'Title': title,
-                    'StoryId': storyId,
-                    'WhoStarts': whoStarts,
-                    'Nodes': nodes
-                }, function (success) {
-                    if (success) {
-                        context.done(null, {
-                            'success': true,
-                            'message': 'Dialog updated successfully.'
-                        });
-                    } else {
-                        context.done(null, {'success': false, 'message': 'Error saving/updating dialog.'});
-                    }
-                });
-            } else {
-                context.done(null, {'success': false, 'message': 'Error saving/updating dialog'});
-            }
-        });
-    } else {
-        console.log('Saving/Updating new dialog: ' + title);
-        lib.save(
-            'Dialog',
-            {
-                'ID': lib.guid(),
-                'Title': title,
-                'StoryId': storyId,
-                'WhoStarts': whoStarts,
-                'CreatedDate': now.toDateString(),
-                'LastUpdated': now.toDateString(),
-                'Nodes': nodes
-            },
-            function (success) {
-                if (success) {
-                    context.done(null, {
-                        'success': true,
-                        'message': 'Dialog saved successfully.'
+    if (!_.isEmpty(id)) {
+        db.saveOrUpdate('Dialog', id, {
+            'LastUpdated': now.toDateString(),
+            'Title': title,
+            'StoryId': storyId,
+            'WhoStarts': whoStarts,
+            'Nodes': nodes
+        })
+            .then(function () {
+                db.get('Dialog', fbUserId)
+                    .then(function (getResponse) {
+                        if (!_.isEmpty(getResponse.Item)
+                            && !_.isEmpty(getResponse.Item.ID)) {
+                            utils.success(
+                                context,
+                                'Admin User',
+                                'updating',
+                                getResponse.Item.UserRoles
+                            );
+                        }
                     });
-                } else {
-                    context.done(null, {'success': false, 'message': 'Error saving dialog'});
-                }
-            }
-        );
+            })
+            .catch(function (e) {
+                utils.error(
+                    context,
+                    'Dialog',
+                    'updating',
+                    'Error updating Dialog.',
+                    e);
+            });
+    } else {
+        db.saveOrUpdate('Dialog', id, {
+            'ID': db.guid(),
+            'Title': title,
+            'StoryId': storyId,
+            'WhoStarts': whoStarts,
+            'CreatedDate': now.toDateString(),
+            'LastUpdated': now.toDateString(),
+            'Nodes': nodes
+        })
+            .then(utils.success(context, 'Dialog', 'saving', {}))
+            .catch(utils.error(
+                context,
+                'Dialog',
+                'saving',
+                'Error updating the dialog.', e));
     }
 };

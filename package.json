@@ -9,5 +9,9 @@
     "type": "git",
     "url": "git://github.com/"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bluebird": "^3.2.1",
+    "lodash": "^4.2.1",
+    "lodash-node": "^3.10.2"
+  }
 }

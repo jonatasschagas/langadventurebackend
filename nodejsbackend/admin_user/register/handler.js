@@ -8,74 +8,66 @@
  * @type {AWS|exports|module.exports}
  */
 
-var AWS = require('aws-sdk');
-AWS.config.update({
-    region: 'us-east-1'
-});
-
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils')
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
-    // logging event
-    console.log(JSON.stringify(event));
+
+    utils.log('registering login/first time access: ', event);
 
     var userName = event['userName'];
     var fbUserId = event['fbUserId'];
     var now = new Date();
 
-    if (!fbUserId || !userName) {
-        console.log('Error registering user. Please provide a facebook User Id and a user name');
-        context.done(null, {
-            'success': false,
-            'message': 'Error registering user. Please provide a facebook User Id and a user name.'
-        });
-        return
+    if (_.isEmpty(fbUserId) || _.isEmpty(userName)) {
+        utils.error(context, 'Admin User', 'registering', null);
+        return;
     }
 
-    lib.get('AdminUser', fbUserId, function (response) {
-        console.log('get response: ' + JSON.stringify(response));
-        if (response.success && response.data) {
-            console.log('Updating user: ' + userName);
-            var userRoles = response.data.Item.UserRoles;
-            lib.update('AdminUser', fbUserId, {
-                'LastLogin': now.toDateString(),
-                'UserName': userName
-            }, function (success) {
-                if (success) {
-                    context.done(null, {
-                        'success': true,
-                        'message': 'User registered successfully.',
-                        'data': {'userRoles': userRoles}
+    if (!_.isEmpty(fbUserId)) {
+        db.saveOrUpdate('AdminUser', fbUserId, {
+            'LastLogin': now.toDateString(),
+            'UserName': userName
+        })
+            .then(function () {
+                db.get('AdminUser', fbUserId)
+                    .then(function (getResponse) {
+                        if (!_.isEmpty(getResponse.Item)
+                            && !_.isEmpty(getResponse.Item.ID)) {
+                            utils.success(
+                                context,
+                                'Admin User',
+                                'updating',
+                                getResponse.Item.UserRoles
+                            );
+                        }
                     });
-                } else {
-                    context.done(null, {'success': false, 'message': 'Error registering user'});
-                }
+            })
+            .catch(function (e) {
+                utils.error(
+                    context,
+                    'Admin User',
+                    'updating',
+                    'Error updating the user last access.',
+                    e)
             });
-        } else {
-            console.log('Registering new user: ' + userName);
-            lib.save(
-                'AdminUser',
-                {
-                    'ID': fbUserId,
-                    'UserName': userName,
-                    'CreatedDate': now.toDateString(),
-                    'UserRoles': []
-                },
-                function (success) {
-                    if (success) {
-                        context.done(null, {
-                            'success': true,
-                            'message': 'User registered successfully.',
-                            'data': {'userRoles': []}
-                        });
-                    } else {
-                        context.done(null, {'success': false, 'message': 'Error registering user'});
-                    }
-                }
-            );
-        }
-    });
-
+    } else {
+        db.saveOrUpdate('AdminUser', id, {
+            'ID': fbUserId,
+            'UserName': userName,
+            'CreatedDate': now.toDateString(),
+            'UserRoles': []
+        })
+            .then(utils.success(context, 'AdminUser', 'saving', {}))
+            .catch(function (e) {
+                utils.error(
+                    context,
+                    'Admin User',
+                    'saving',
+                    'Error saving the user.',
+                    e)
+            });
+    }
 };

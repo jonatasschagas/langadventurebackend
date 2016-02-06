@@ -5,28 +5,32 @@
  * @type {*|exports|module.exports}
  */
 
-// Require Logic
-var lib = require('../../lib');
+var db = require('../../lib/dynamo-db-utils');
+var utils = require('../../lib/utils');
+var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-    console.log('Fetching admin users: ');
-    lib.list('AdminUser', 'ID,UserName,LastLogin,UserRoles', function (response) {
-        console.log(response);
-        if (response.success && response.data) {
-            var items = response.data;
-            if (!items) {
-                items = [];
-            }
-            context.done(null, {
-                'success': true,
-                'message': 'Admin users were fetched successfully.',
-                'data': {'items': items}
-            });
+    utils.log('Fetching admin users: ', event);
+
+    db.list('AdminUser', 'ID,UserName,LastLogin,UserRoles').then(function (response) {
+        utils.log('db response: ', response);
+        if (!_.isEmpty(response.Items)) {
+            utils.success(context, 'Admin User', 'fetch', {'items': response.Items});
         } else {
-            context.done(null, {'success': false, 'message': 'Unable to fetch admin users.'});
+            utils.error(context,
+                'Admin User',
+                'fetch',
+                'Unable to find admin user.',
+                null);
         }
+    }).catch(function (e) {
+        utils.error(context,
+            'Admin User',
+            'fetch',
+            'Unable to find admin user.',
+            e);
     });
 
 };
