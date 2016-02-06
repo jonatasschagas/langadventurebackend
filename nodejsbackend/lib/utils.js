@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * This file contains utility functions
  */
@@ -13,7 +15,7 @@ function success(context, itemName, operation, data) {
 }
 
 function error(context, itemName, operation, message, e) {
-    var message = operation + ' '
+    message = operation + ' '
         + itemName + ' to/from the database. '
         + message;
     console.error(message, e);

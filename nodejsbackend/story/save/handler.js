@@ -16,15 +16,10 @@ module.exports.handler = function (event, context) {
 
     utils.log('saving story: ', event);
 
-    var id = event['id'];
-    var title = event['title'];
-    var targetLanguage = event['targetLanguage'];
-    var translatedLanguage = event['translatedLanguage'];
-    var now = new Date();
+    var id = event.id, title = event.title, targetLanguage = event.targetLanguage,
+        translatedLanguage = event.translatedLanguage, now = new Date();
 
-    if (_.isEmpty(title) ||
-        _.isEmpty(targetLanguage) ||
-        _.isEmpty(translatedLanguage)) {
+    if (_.isEmpty(title) || _.isEmpty(targetLanguage) || _.isEmpty(translatedLanguage)) {
         utils.error(
             context,
             'Story',
@@ -56,7 +51,7 @@ module.exports.handler = function (event, context) {
                     'updating',
                     'Error updating the story in the database.',
                     e
-                )
+                );
             }
         );
     } else {
@@ -82,7 +77,7 @@ module.exports.handler = function (event, context) {
                     'saving',
                     'Error saving the story in the database.',
                     e
-                )
+                );
             }
         );
     }

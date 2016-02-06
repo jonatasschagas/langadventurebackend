@@ -14,10 +14,9 @@ var _ = require('lodash-node');
 // Lambda Handler
 module.exports.handler = function (event, context) {
     // logging event
-    utils.log('update roles:', event)
+    utils.log('update roles:', event);
 
-    var roles = event['roles'];
-    var fbUserId = event['fbUserId'];
+    var roles = event.roles, fbUserId = event.fbUserId;
 
     if (_.isEmpty(fbUserId) || _.isEmpty(roles)) {
         utils.error(
@@ -33,7 +32,7 @@ module.exports.handler = function (event, context) {
     utils.log('Updating user: ', fbUserId);
     db.update('AdminUser', fbUserId, {
         'UserRoles': roles
-    }).then(function (response) {
+    }).then(function () {
         utils.success(context, 'Admin User', 'updated', null);
     }).catch(function (e) {
         utils.error(

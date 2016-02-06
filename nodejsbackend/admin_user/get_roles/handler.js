@@ -14,7 +14,7 @@ module.exports.handler = function (event, context) {
 
     utils.log('fetching roles: ', event);
 
-    var fbUserId = event['fbUserId'];
+    var fbUserId = event.fbUserId;
 
     if (_.isEmpty(fbUserId)) {
         utils.error(context,

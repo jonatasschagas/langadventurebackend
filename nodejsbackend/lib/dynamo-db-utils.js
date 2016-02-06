@@ -1,3 +1,4 @@
+'use strict';
 /**
  * dynamo-db-utils: Encapsulates all the functions related to
  * DynamoDB.
@@ -11,7 +12,7 @@
 var _ = require('lodash-node');
 var Promise = require("bluebird");
 var AWS = require('aws-sdk');
-var utils = require('./utils')
+var utils = require('./utils');
 AWS.config.update({
     region: "us-east-1"
 });
@@ -30,8 +31,7 @@ function getDynamoDbClient() {
  * @param valuesToSave
  */
 function save(tableName, valuesToSave) {
-    var dynamoDbClient = getDynamoDbClient();
-    var insertRecord = {
+    var dynamoDbClient = getDynamoDbClient(), insertRecord = {
         TableName: tableName,
         Item: valuesToSave
     };
@@ -45,8 +45,7 @@ function save(tableName, valuesToSave) {
  * @param key
  */
 function get(tableName, key) {
-    var dynamoDbClient = getDynamoDbClient();
-    var params = {
+    var dynamoDbClient = getDynamoDbClient(), params = {
         Key: {
             'ID': key
         },
@@ -63,22 +62,23 @@ function get(tableName, key) {
  * @param valuesToUpdate
  */
 function update(tableName, key, valuesToUpdate) {
-    var dynamoDbClient = getDynamoDbClient();
-    var updateExpression = 'set ';
-    var expressionAttributeValues = {};
-    var i = 0;
-    for (var attributeName in valuesToUpdate) {
+
+    var dynamoDbClient = getDynamoDbClient(), updateExpression = 'set ',
+        expressionAttributeValues = {}, i = 0,
+        attributeName, paramPlaceHolder, params;
+
+    for (attributeName in valuesToUpdate) {
         if (valuesToUpdate.hasOwnProperty(attributeName)) {
-            var paramPlaceHolder = ':' + String.fromCharCode(97 + i);
+            paramPlaceHolder = ':' + String.fromCharCode(97 + i);
             if (i > 0) {
                 updateExpression += ',';
             }
             updateExpression += attributeName + ' = ' + paramPlaceHolder + ' ';
             expressionAttributeValues[paramPlaceHolder] = valuesToUpdate[attributeName];
-            i++;
+            i = i + 1;
         }
     }
-    var params = {
+    params = {
         Key: {
             'ID': key
         },
@@ -98,8 +98,7 @@ function update(tableName, key, valuesToUpdate) {
  * @param fieldsToFetch
  */
 function list(tableName, fieldsToFetch) {
-    var dynamoDbClient = getDynamoDbClient();
-    var query = {
+    var dynamoDbClient = getDynamoDbClient(), query = {
         TableName: tableName,
         ProjectionExpression: fieldsToFetch
     };
@@ -114,8 +113,7 @@ function list(tableName, fieldsToFetch) {
  * @returns {*}
  */
 function deleteItem(tableName, key) {
-    var dynamoDbClient = getDynamoDbClient();
-    var deleteQuery = {
+    var dynamoDbClient = getDynamoDbClient(), deleteQuery = {
         TableName: tableName,
         Key: {
             'ID': key
@@ -136,17 +134,15 @@ function saveOrUpdate(tableName, id, fields) {
         get(tableName, id).then(function (getResponse) {
             utils.log('get response: ', getResponse);
             if (!_.isEmpty(getResponse.Item) && !_.isEmpty(getResponse.Item.ID)) {
-                utils.log('updating record: ' ,fields);
+                utils.log('updating record: ', fields);
                 update(tableName, id, fields).then(function (updateResponse) {
                     utils.log('response from DB: ', updateResponse);
                     return Promise.resolve(getResponse);
                 }).catch(function (e) {
                     return Promise
-                        .reject(new Error(
-                            'Error registering access to the database.', e));
+                        .reject(new Error('Error registering access to the database.', e));
                 });
             } else {
-                console.log('Registering new user: ' + userName);
                 return save(tableName, fields);
             }
         });

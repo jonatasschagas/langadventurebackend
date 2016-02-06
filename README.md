@@ -32,5 +32,15 @@ Go to the project root and execute:
 
 This command will use the event.json file as the input of the function.
 
+# Please use lint!
+
+In order to keep the code clean and avoid "weird" behavior from js use lint to spot errors.
+
+``
+    jslint --nomen '**/*.js'
+``
+
+To download jslint go here: https://github.com/reid/node-jslint
+
 # More documentation here:
 http://docs.serverless.com/docs/commands-overview

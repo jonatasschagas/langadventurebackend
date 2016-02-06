@@ -9,7 +9,7 @@
  */
 
 var db = require('../../lib/dynamo-db-utils');
-var utils = require('../../lib/utils')
+var utils = require('../../lib/utils');
 var _ = require('lodash-node');
 
 // Lambda Handler
@@ -17,9 +17,7 @@ module.exports.handler = function (event, context) {
 
     utils.log('registering login/first time access: ', event);
 
-    var userName = event['userName'];
-    var fbUserId = event['fbUserId'];
-    var now = new Date();
+    var userName = event.userName, fbUserId = event.fbUserId, now = new Date();
 
     if (_.isEmpty(fbUserId) || _.isEmpty(userName)) {
         utils.error(context, 'Admin User', 'registering', null);
@@ -34,8 +32,7 @@ module.exports.handler = function (event, context) {
             .then(function () {
                 db.get('AdminUser', fbUserId)
                     .then(function (getResponse) {
-                        if (!_.isEmpty(getResponse.Item)
-                            && !_.isEmpty(getResponse.Item.ID)) {
+                        if (!_.isEmpty(getResponse.Item) && !_.isEmpty(getResponse.Item.ID)) {
                             utils.success(
                                 context,
                                 'Admin User',
@@ -51,10 +48,11 @@ module.exports.handler = function (event, context) {
                     'Admin User',
                     'updating',
                     'Error updating the user last access.',
-                    e)
+                    e
+                );
             });
     } else {
-        db.saveOrUpdate('AdminUser', id, {
+        db.saveOrUpdate('AdminUser', fbUserId, {
             'ID': fbUserId,
             'UserName': userName,
             'CreatedDate': now.toDateString(),
@@ -67,7 +65,8 @@ module.exports.handler = function (event, context) {
                     'Admin User',
                     'saving',
                     'Error saving the user.',
-                    e)
+                    e
+                );
             });
     }
 };

@@ -14,14 +14,14 @@ module.exports.handler = function (event, context) {
 
     utils.log('Delete story:', event);
 
-    var id = event['id'];
+    var id = event.id;
     if (_.isEmpty(id)) {
         utils.error(context, 'Story', 'deleting', 'Please provide an id.', null);
-        return
+        return;
     }
 
     console.log('Deleting story id: ' + id);
-    db.deleteItem('Story', id).then(function (response) {
+    db.deleteItem('Story', id).then(function () {
         utils.success(context, 'Story', 'deleting', null);
     }).catch(function (e) {
         utils.success(context, 'Story', 'deleting', null);
@@ -30,6 +30,7 @@ module.exports.handler = function (event, context) {
             'Story',
             'deleting',
             'Error deleting story from the database.',
-            e);
+            e
+        );
     });
 };

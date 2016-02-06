@@ -11,13 +11,14 @@ var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
-    console.log('Fetching stories: ');
+    utils.log('Fetching stories: ', event);
     db.list('Story',
         'ID,' +
         'Title,' +
         'TargetLanguage,' +
         'TranslatedLanguage,' +
-        'CreatedDate').then(function (response) {
+        'CreatedDate')
+        .then(function (response) {
             utils.log('Listing stories: ', response);
             utils.success(
                 context,
@@ -31,6 +32,7 @@ module.exports.handler = function (event, context) {
                 'Stories',
                 'listed',
                 'Error fetching stories from database.',
-                e);
+                e
+            );
         });
 };
