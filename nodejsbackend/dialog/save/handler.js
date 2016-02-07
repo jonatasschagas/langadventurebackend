@@ -32,37 +32,23 @@ module.exports.handler = function (event, context) {
     }
 
     if (!_.isEmpty(id)) {
-        db.saveOrUpdate('Dialog', id, {
+        db.update('Dialog', id, {
             'LastUpdated': now.toDateString(),
             'Title': title,
             'StoryId': storyId,
             'WhoStarts': whoStarts,
             'Nodes': nodes
-        })
-            .then(function () {
-                db.get('Dialog', id)
-                    .then(function (getResponse) {
-                        if (!_.isEmpty(getResponse.Item) && !_.isEmpty(getResponse.Item.ID)) {
-                            utils.success(
-                                context,
-                                'Admin User',
-                                'updating',
-                                getResponse.Item.UserRoles
-                            );
-                        }
-                    });
-            })
-            .catch(function (e) {
-                utils.error(
-                    context,
-                    'Dialog',
-                    'updating',
-                    'Error updating Dialog.',
-                    e
-                );
-            });
+        }).then(
+            function () {
+                utils.success(context, 'Dialog', 'updated', {});
+            }
+        ).catch(
+            function (e) {
+                utils.error(context, 'Dialog', 'updated', 'Error updating Dialog.', e);
+            }
+        );
     } else {
-        db.saveOrUpdate('Dialog', id, {
+        db.save('Dialog', {
             'ID': db.guid(),
             'Title': title,
             'StoryId': storyId,
@@ -70,16 +56,16 @@ module.exports.handler = function (event, context) {
             'CreatedDate': now.toDateString(),
             'LastUpdated': now.toDateString(),
             'Nodes': nodes
-        })
-            .then(utils.success(context, 'Dialog', 'saving', {}))
-            .catch(function (e) {
-                utils.error(
-                    context,
-                    'Dialog',
-                    'saving',
-                    'Error updating the dialog.',
-                    e
-                );
-            });
+        }).then(function () {
+            utils.success(context, 'Dialog', 'saving', {});
+        }).catch(function (e) {
+            utils.error(
+                context,
+                'Dialog',
+                'saving',
+                'Error updating the dialog.',
+                e
+            );
+        });
     }
 };

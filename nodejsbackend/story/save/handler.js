@@ -31,7 +31,7 @@ module.exports.handler = function (event, context) {
     }
 
     if (!_.isEmpty(id)) {
-        db.saveOrUpdate('Story', id, {
+        db.update('Story', id, {
             'LastUpdated': now.toDateString(),
             'Title': title,
             'TargetLanguage': targetLanguage,
@@ -49,7 +49,7 @@ module.exports.handler = function (event, context) {
             );
         });
     } else {
-        db.saveOrUpdate('Story', id, {
+        db.save('Story', {
             'ID': db.guid(),
             'Title': title,
             'TargetLanguage': targetLanguage,
@@ -58,12 +58,12 @@ module.exports.handler = function (event, context) {
             'LastUpdated': now.toDateString()
         }).then(function (response) {
             utils.log('Story has been updated successfully.', response);
-            utils.success(context, 'Story', 'saving', {});
+            utils.success(context, 'Story', 'saved', {});
         }).catch(function (e) {
             utils.error(
                 context,
                 'Story',
-                'saving',
+                'saved',
                 'Error saving the story in the database.',
                 e
             );
