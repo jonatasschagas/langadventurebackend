@@ -119,7 +119,7 @@ function listByGSI(tableName, fieldsToFetch, gsiName, gsiValue) {
         TableName: tableName,
         IndexName: gsiName + '-index',
         KeyConditionExpression: "#k = :v",
-        ExpressionAttributeNames:{
+        ExpressionAttributeNames: {
             "#k": gsiName
         },
         ExpressionAttributeValues: {
@@ -156,9 +156,8 @@ function deleteItem(tableName, key) {
 function saveOrUpdate(tableName, id, fields) {
     if (!_.isEmpty(id)) {
         return update(tableName, id, fields);
-    } else {
-        return save(tableName, fields);
     }
+    return save(tableName, fields);
 }
 
 /**

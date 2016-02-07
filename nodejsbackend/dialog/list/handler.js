@@ -15,7 +15,7 @@ module.exports.handler = function (event, context) {
 
     var storyId = event.storyId;
 
-    if(!_.isEmpty(storyId)) {
+    if (!_.isEmpty(storyId)) {
         db.listByGSI('Dialog',
             'ID,' +
             'Title,' +
@@ -23,9 +23,8 @@ module.exports.handler = function (event, context) {
             'Nodes,' +
             'CreatedDate',
             'StoryId',
-            storyId
-        )
-            .then(function (response) {
+            storyId).then(
+            function (response) {
                 utils.log('Listing dialogs: ', response);
                 utils.success(
                     context,
@@ -33,7 +32,9 @@ module.exports.handler = function (event, context) {
                     'listed',
                     {'items': response.Items}
                 );
-            }).catch(function (e) {
+            }
+        ).catch(
+            function (e) {
                 utils.error(
                     context,
                     'Dialogs',
@@ -41,7 +42,8 @@ module.exports.handler = function (event, context) {
                     'Error fetching dialogs from database.',
                     e
                 );
-            });
+            }
+        );
     } else {
         db.list('Dialog',
             'ID,' +
