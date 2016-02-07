@@ -131,21 +131,7 @@ function deleteItem(tableName, key) {
  */
 function saveOrUpdate(tableName, id, fields) {
     if (!_.isEmpty(id)) {
-        get(tableName, id).then(function (getResponse) {
-            utils.log('get response: ', getResponse);
-            if (!_.isEmpty(getResponse.Item) && !_.isEmpty(getResponse.Item.ID)) {
-                utils.log('updating record: ', fields);
-                update(tableName, id, fields).then(function (updateResponse) {
-                    utils.log('response from DB: ', updateResponse);
-                    return Promise.resolve(getResponse);
-                }).catch(function (e) {
-                    return Promise
-                        .reject(new Error('Error registering access to the database.', e));
-                });
-            } else {
-                return save(tableName, fields);
-            }
-        });
+        return update(tableName, id, fields);
     } else {
         return save(tableName, fields);
     }

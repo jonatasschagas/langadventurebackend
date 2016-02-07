@@ -12,6 +12,8 @@
   "keywords": [],
   "devDependencies": {},
   "dependencies": {
+    "bluebird": "^3.2.2",
+    "lodash-node": "^3.10.2",
     "serverless-helpers-js": "~0.0.3"
   }
 }

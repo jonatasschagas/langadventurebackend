@@ -16,15 +16,15 @@ module.exports.handler = function (event, context) {
 
     var id = event.id;
     if (_.isEmpty(id)) {
-        utils.error(context, 'Story', 'deleting', 'Please provide an id.', null);
+        utils.error(context, 'Story', 'deleted', 'Please provide an id.', null);
         return;
     }
 
     console.log('Deleting story id: ' + id);
     db.deleteItem('Story', id).then(function () {
-        utils.success(context, 'Story', 'deleting', null);
+        utils.success(context, 'Story', 'deleted', null);
     }).catch(function (e) {
-        utils.success(context, 'Story', 'deleting', null);
+        utils.success(context, 'Story', 'deleted', null);
         utils.error(
             context,
             'Story',

@@ -36,24 +36,18 @@ module.exports.handler = function (event, context) {
             'Title': title,
             'TargetLanguage': targetLanguage,
             'TranslatedLanguage': translatedLanguage
-        }).then(
-            utils.success(
+        }).then(function (response) {
+            utils.log('Story has been updated successfully.', response);
+            utils.success(context, 'Story', 'updated', {});
+        }).catch(function (e) {
+            utils.error(
                 context,
                 'Story',
-                'updated',
-                {}
-            )
-        ).catch(
-            function (e) {
-                utils.error(
-                    context,
-                    'Story',
-                    'updating',
-                    'Error updating the story in the database.',
-                    e
-                );
-            }
-        );
+                'updating',
+                'Error updating the story in the database.',
+                e
+            );
+        });
     } else {
         db.saveOrUpdate('Story', id, {
             'ID': db.guid(),
@@ -62,23 +56,17 @@ module.exports.handler = function (event, context) {
             'TranslatedLanguage': translatedLanguage,
             'CreatedDate': now.toDateString(),
             'LastUpdated': now.toDateString()
-        }).then(
-            utils.success(
+        }).then(function (response) {
+            utils.log('Story has been updated successfully.', response);
+            utils.success(context, 'Story', 'saving', {});
+        }).catch(function (e) {
+            utils.error(
                 context,
                 'Story',
                 'saving',
-                {}
-            )
-        ).catch(
-            function (e) {
-                utils.error(
-                    context,
-                    'Story',
-                    'saving',
-                    'Error saving the story in the database.',
-                    e
-                );
-            }
-        );
+                'Error saving the story in the database.',
+                e
+            );
+        });
     }
 };
