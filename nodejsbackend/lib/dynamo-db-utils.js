@@ -107,6 +107,30 @@ function list(tableName, fieldsToFetch) {
 }
 
 /**
+ * lists
+ * @param tableName
+ * @param fieldsToFetch
+ * @param gsiName
+ * @param gsiValue
+ * @returns {*}
+ */
+function listByGSI(tableName, fieldsToFetch, gsiName, gsiValue) {
+    var dynamoDbClient = getDynamoDbClient(), query = {
+        TableName: tableName,
+        IndexName: gsiName + '-index',
+        KeyConditionExpression: "#k = :v",
+        ExpressionAttributeNames:{
+            "#k": gsiName
+        },
+        ExpressionAttributeValues: {
+            ":v": gsiValue
+        }
+    };
+    console.log('Querying table: ' + tableName + ', fields to fetch: ' + fieldsToFetch);
+    return dynamoDbClient.queryAsync(query);
+}
+
+/**
  * Deletes the item from DynamoDB
  * @param tableName
  * @param key
@@ -153,6 +177,7 @@ module.exports = {
     get: get,
     update: update,
     list: list,
+    listByGSI: listByGSI,
     deleteItem: deleteItem,
     saveOrUpdate: saveOrUpdate,
     guid: guid

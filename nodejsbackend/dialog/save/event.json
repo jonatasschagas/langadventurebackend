@@ -1,26 +1,47 @@
 {
-  "id": "1b74bf34-67e5-7700-3e95-c2c31301a603",
-  "title": "Leve1/airport/officer/help",
-  "storyId": "DASDASD-DASDASD-ASDASDA",
+  "title": "Level1/Greeting/Dialog",
+  "storyId": "7a6bda0e-0d4d-6c71-ea25-5942a464c8a4",
   "whoStarts": "player",
   "nodes": [
     {
-      "text": "node1",
+      "title": "Hello There!",
+      "translation": "Ola!",
       "nodes": [
         {
-          "text": "node1.1",
+          "title": "Hi! How are you?",
+          "translation": "Oi! Tudo bem?",
           "nodes": [
             {
-              "text": "node1.1.1",
-              "nodes": []
+              "title": "I'm fine thanks! How about you?",
+              "translation": "Estou bem, obrigado. E você? Como vai?",
+              "nodes": [
+                {
+                  "title": "I'm fine too. What are the news?",
+                  "translation": "Estou bem tambem. E ai? Novidades?",
+                  "nodes": [],
+                  "$$hashKey": "object:187"
+                }
+              ],
+              "$$hashKey": "object:168"
+            },
+            {
+              "title": "Not so good. I've been a bit tired lately.",
+              "translation": "Mais ou menos. Ultimamente estou me sentindo cansado.",
+              "nodes": [
+                {
+                  "title": "Why have you been tired? Too much work?",
+                  "translation": "Porque voce esta cansado? Tens trabalhado muito?",
+                  "nodes": [],
+                  "$$hashKey": "object:199"
+                }
+              ],
+              "$$hashKey": "object:176"
             }
-          ]
-        },
-        {
-          "text": "node1.2",
-          "nodes": []
+          ],
+          "$$hashKey": "object:149"
         }
-      ]
+      ],
+      "$$hashKey": "object:110"
     }
   ]
 }
