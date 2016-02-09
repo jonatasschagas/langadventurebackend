@@ -1,0 +1,8 @@
+{
+  "questOrder": 0,
+  "title": "Default Quest",
+  "introduction": [],
+  "completion": [],
+  "questState": ["begin", "end"],
+  "description": "This is the default Quest. It is utilized by the random NPCs."
+}
