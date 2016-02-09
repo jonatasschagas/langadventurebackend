@@ -1,0 +1,8 @@
+{
+  "npcNames": [
+    {"name": "Maria", "lang": "PT"},
+    {"name": "Mary", "lang": "EN"},
+    {"name": "Marja", "lang": "FI"}
+  ],
+  "description": "This NPC will stay mainly at the Supermarket area."
+}
