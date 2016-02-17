@@ -11,27 +11,27 @@ var _ = require('lodash-node');
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
-  utils.log('Fetching npcs: ', event);
-  db.list('Npc',
-      'ID,' +
-      'NpcNames,' +
-      'Description,' +
-      'CreatedDate')
-      .then(function (response) {
-        utils.log('Listing npcs: ', response);
-        utils.success(
-            context,
-            'Npc',
-            'listed',
-            {'items': response.Items}
-        );
-      }).catch(function (e) {
-        utils.error(
-            context,
-            'Npc',
-            'listed',
-            'Error fetching npcs from database.',
-            e
-        );
-      });
+    utils.log('Fetching npcs: ', event);
+    db.list('Npc',
+        'ID,' +
+        'NpcNames,' +
+        'Description,' +
+        'CreatedDate')
+        .then(function (response) {
+            utils.log('Listing npcs: ', response);
+            utils.success(
+                context,
+                'Npc',
+                'listed',
+                {'items': response.Items}
+            );
+        }).catch(function (e) {
+            utils.error(
+                context,
+                'Npc',
+                'listed',
+                'Error fetching npcs from database.',
+                e
+            );
+        });
 };

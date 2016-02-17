@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * This Lambda Function deletes the given Npc record based on the ID
+ * This Lambda Function deletes the given Quest record based on the ID
  * @type {*|exports|module.exports}
  */
 
@@ -12,23 +12,23 @@ var _ = require('lodash-node');
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-    utils.log('Delete npc:', event);
+    utils.log('Delete quest:', event);
 
     var id = event.id;
     if (_.isEmpty(id)) {
-        utils.error(context, 'Npc', 'deleted', 'Please provide an id.', null);
+        utils.error(context, 'Quest', 'deleted', 'Please provide an id.', null);
         return;
     }
 
-    console.log('Deleting npc id: ' + id);
-    db.deleteItem('Npc', id).then(function () {
-        utils.success(context, 'Npc', 'deleted', null);
+    console.log('Deleting quest id: ' + id);
+    db.deleteItem('Quest', id).then(function () {
+        utils.success(context, 'Quest', 'deleted', null);
     }).catch(function (e) {
         utils.error(
             context,
-            'Npc',
+            'Quest',
             'deleting',
-            'Error deleting npc from the database.',
+            'Error deleting quest from the database.',
             e
         );
     });

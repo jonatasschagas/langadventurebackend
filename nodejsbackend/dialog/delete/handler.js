@@ -24,7 +24,6 @@ module.exports.handler = function (event, context) {
     db.deleteItem('Dialog', id).then(function () {
         utils.success(context, 'Dialog', 'deleted', null);
     }).catch(function (e) {
-        utils.success(context, 'Dialog', 'deleted', null);
         utils.error(
             context,
             'Dialog',
