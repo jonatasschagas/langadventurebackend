@@ -17,15 +17,16 @@ module.exports.handler = function (event, context) {
     // logging event
     utils.log('dialog saving: ', event);
 
-    var id = event.id, title = event.title, storyId = event.storyId,
-        whoStarts = event.whoStarts, nodes = event.nodes, now = new Date();
+    var id = event.id, npcId = event.npcId, questId = event.questId,
+        questionCompletion = event.questCompletion,
+        nodes = event.nodes, now = new Date();
 
-    if (_.isEmpty(title) || _.isEmpty(storyId) || _.isEmpty(whoStarts) || _.isEmpty(nodes)) {
+    if (_.isEmpty(npcId) || _.isEmpty(questId) || _.isEmpty(nodes)) {
         utils.error(
             context,
             'Dialog',
             'saving/updating',
-            'Please provide a title, story, who starts the dialog and the dialog nodes.',
+            'Please provide a npc Id, questId and the dialog nodes.',
             null
         );
         return;
@@ -34,10 +35,10 @@ module.exports.handler = function (event, context) {
     if (!_.isEmpty(id)) {
         db.update('Dialog', id, {
             'LastUpdated': now.toDateString(),
-            'Title': title,
-            'StoryId': storyId,
-            'WhoStarts': whoStarts,
-            'Nodes': nodes
+            'NpcId': npcId,
+            'QuestId': questId,
+            'Nodes': nodes,
+            'QuestCompletion': questionCompletion
         }).then(
             function () {
                 utils.success(context, 'Dialog', 'updated', {});
@@ -50,9 +51,9 @@ module.exports.handler = function (event, context) {
     } else {
         db.save('Dialog', {
             'ID': db.guid(),
-            'Title': title,
-            'StoryId': storyId,
-            'WhoStarts': whoStarts,
+            'NpcId': npcId,
+            'QuestId': questId,
+            'QuestCompletion': questionCompletion,
             'CreatedDate': now.toDateString(),
             'LastUpdated': now.toDateString(),
             'Nodes': nodes

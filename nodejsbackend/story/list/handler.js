@@ -28,11 +28,7 @@ module.exports.handler = function (event, context) {
             );
         }).catch(function (e) {
             utils.error(
-                context,
-                'Stories',
-                'listed',
-                'Error fetching stories from database.',
-                e
+                context, 'Stories', 'listed', 'Error fetching stories from database.', e
             );
         });
 };

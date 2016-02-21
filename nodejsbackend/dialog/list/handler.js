@@ -13,16 +13,16 @@ var _ = require('lodash-node');
 module.exports.handler = function (event, context) {
     utils.log('Fetching dialogs: ', event);
 
-    var storyId = event.storyId;
+    var questId = event.questId;
 
-    if (!_.isEmpty(storyId)) {
+    if (!_.isEmpty(questId)) {
         db.listByGSI('Dialog',
             'ID,' +
-            'Title,' +
-            'WhoStarts,' +
+            'NpcId,' +
+            'QuestId,' +
             'Nodes,' +
             'CreatedDate',
-            'StoryId',
+            'QuestCompletion',
             storyId).then(
             function (response) {
                 utils.log('Listing dialogs: ', response);
@@ -45,29 +45,12 @@ module.exports.handler = function (event, context) {
             }
         );
     } else {
-        db.list('Dialog',
-            'ID,' +
-            'Title,' +
-            'StoryId,' +
-            'WhoStarts,' +
-            'Nodes,' +
-            'CreatedDate')
-            .then(function (response) {
-                utils.log('Listing dialogs: ', response);
-                utils.success(
-                    context,
-                    'Dialogs',
-                    'listed',
-                    {'items': response.Items}
-                );
-            }).catch(function (e) {
-                utils.error(
-                    context,
-                    'Dialogs',
-                    'listed',
-                    'Error fetching dialogs from database.',
-                    e
-                );
-            });
+        utils.error(
+            context,
+            'Dialog',
+            'list',
+            'Please provide a quest Id in order to list the dialogs.',
+            null
+        );
     }
 };

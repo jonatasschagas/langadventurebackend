@@ -25,11 +25,7 @@ module.exports.handler = function (event, context) {
         utils.success(context, 'Story', 'deleted', null);
     }).catch(function (e) {
         utils.error(
-            context,
-            'Story',
-            'deleting',
-            'Error deleting story from the database.',
-            e
+            context, 'Story', 'deleting', 'Error deleting story from the database.', e
         );
     });
 };
