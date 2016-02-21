@@ -17,8 +17,8 @@ module.exports.handler = function (event, context) {
 
     var id = event.id, questOrder = event.questOrder,
         storyId= event.storyId, title = event.title,
-        introduction = event.introduction,
-        completion = event.completion, now = new Date();
+        introduction = event.introduction, introductionTranslation = event.introductionTranslation,
+        completion = event.completion, completionTranslation = event.completionTranslation, now = new Date();
 
     if (_.isEmpty(questOrder) || _.isEmpty(title) || _.isEmpty(storyId)) {
         utils.error(
@@ -58,7 +58,9 @@ module.exports.handler = function (event, context) {
                         'QuestOrder': questOrder,
                         'Title': title,
                         'Introduction': introduction,
+                        'IntroductionTranslation': introductionTranslation,
                         'Completion': completion,
+                        'CompletionTranslation': completionTranslation,
                         'StoryId': storyId
                     }).then(function (response) {
                         utils.log('Quest has been updated successfully.', response);
@@ -75,7 +77,9 @@ module.exports.handler = function (event, context) {
                         'QuestOrder': questOrder,
                         'Title': title,
                         'Introduction': introduction,
+                        'IntroductionTranslation': introductionTranslation,
                         'Completion': completion,
+                        'CompletionTranslation': completionTranslation,
                         'StoryId': storyId,
                         'CreatedDate': now.toDateString(),
                         'LastUpdated': now.toDateString()

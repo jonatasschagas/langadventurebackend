@@ -20,7 +20,9 @@ module.exports.handler = function (event, context) {
             'ID,' +
             'Title,' +
             'Introduction,' +
+            'IntroductionTranslation,' +
             'Completion,' +
+            'CompletionTranslation,' +
             'QuestOrder,' +
             'CreatedDate',
             'StoryId',
