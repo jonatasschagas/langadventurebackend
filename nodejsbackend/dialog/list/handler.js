@@ -23,7 +23,7 @@ module.exports.handler = function (event, context) {
             'Nodes,' +
             'CreatedDate',
             'QuestCompletion',
-            storyId).then(
+            questId).then(
             function (response) {
                 utils.log('Listing dialogs: ', response);
                 utils.success(
