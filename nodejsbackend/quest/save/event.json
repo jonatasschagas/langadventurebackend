@@ -1,8 +1,7 @@
 {
-  "questOrder": 2,
-  "title": "Default Quest",
-  "introduction": [],
-  "completion": [],
-  "questState": ["begin", "end"],
-  "description": "This is the default Quest. It is utilized by the random NPCs."
+  "title": "This is a test Quest",
+  "questOrder": "0",
+  "introduction": "asdasd",
+  "completion": "asdasd",
+  "storyId": "7a6bda0e-0d4d-6c71-ea25-5942a464c8a4"
 }
