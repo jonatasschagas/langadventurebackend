@@ -15,18 +15,18 @@ module.exports.handler = function (event, context) {
 
     utils.log('saving quest: ', event);
 
-    var id = event.id, questOrder = event.questOrder, title = event.title, introduction = event.introduction,
-        completion = event.completion, questState = event.questState,
-        description = event.description, now = new Date();
+    var id = event.id, questOrder = event.questOrder,
+        storyId= event.storyId, title = event.title,
+        introduction = event.introduction,
+        completion = event.completion, now = new Date();
 
-    if (questOrder == null || _.isEmpty(title) ||
-        _.isEmpty(questState) || _.isEmpty(description)) {
+    if (_.isEmpty(questOrder) || _.isEmpty(title) || _.isEmpty(storyId)) {
         utils.error(
             context,
             'Quest',
             'saved',
-            'Please provide the following parameters in order to save/update the quest: questOrder, title, ' +
-            'introduction, completion, questState and description.',
+            'Please provide the following parameters in ' +
+            'order to save/update the quest: questOrder, title and story id.',
             null
         );
         return;
@@ -59,18 +59,14 @@ module.exports.handler = function (event, context) {
                         'Title': title,
                         'Introduction': introduction,
                         'Completion': completion,
-                        'QuestState': questState,
-                        'Description': description
+                        'StoryId': storyId
                     }).then(function (response) {
                         utils.log('Quest has been updated successfully.', response);
                         utils.success(context, 'Quest', 'updated', {});
                     }).catch(function (e) {
                         utils.error(
-                            context,
-                            'Quest',
-                            'updating',
-                            'Error updating the quest in the database.',
-                            e
+                            context, 'Quest', 'updating',
+                            'Error updating the quest in the database.', e
                         );
                     });
                 } else {
@@ -80,8 +76,7 @@ module.exports.handler = function (event, context) {
                         'Title': title,
                         'Introduction': introduction,
                         'Completion': completion,
-                        'QuestState': questState,
-                        'Description': description,
+                        'StoryId': storyId,
                         'CreatedDate': now.toDateString(),
                         'LastUpdated': now.toDateString()
                     }).then(function (response) {

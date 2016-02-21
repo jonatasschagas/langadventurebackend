@@ -12,30 +12,46 @@ var _ = require('lodash-node');
 // Lambda Handler
 module.exports.handler = function (event, context) {
     utils.log('Fetching quests: ', event);
-    db.list('Quest',
-        'ID,' +
-        'Title,' +
-        'Introduction,' +
-        'Completion,' +
-        'QuestOrder,' +
-        'QuestState,' +
-        'Description,' +
-        'CreatedDate')
-    .then(function (response) {
-        utils.log('Listing quests: ', response);
-        utils.success(
-            context,
-            'Quests',
-            'listed',
-            {'items': response.Items}
+
+    var storyId = event.storyId;
+
+    if (!_.isEmpty(storyId)) {
+        db.listByGSI('Quest',
+            'ID,' +
+            'Title,' +
+            'Introduction,' +
+            'Completion,' +
+            'QuestOrder,' +
+            'CreatedDate',
+            'StoryId',
+            storyId).then(
+            function (response) {
+                utils.log('Listing quests: ', response);
+                utils.success(
+                    context,
+                    'Quests',
+                    'listed',
+                    {'items': response.Items}
+                );
+            }
+        ).catch(
+            function (e) {
+                utils.error(
+                    context,
+                    'Quests',
+                    'listed',
+                    'Error fetching quests from database.',
+                    e
+                );
+            }
         );
-    }).catch(function (e) {
+    } else {
         utils.error(
             context,
-            'Quests',
-            'listed',
-            'Error fetching quests from database.',
-            e
+            'Quest',
+            'list',
+            'Please provide a story Id in order to list the quests.',
+            null
         );
-    });
+    }
 };

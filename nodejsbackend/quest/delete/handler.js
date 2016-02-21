@@ -24,12 +24,8 @@ module.exports.handler = function (event, context) {
     db.deleteItem('Quest', id).then(function () {
         utils.success(context, 'Quest', 'deleted', null);
     }).catch(function (e) {
-        utils.error(
-            context,
-            'Quest',
-            'deleting',
-            'Error deleting quest from the database.',
-            e
+        utils.error(context, 'Quest', 'deleting',
+            'Error deleting quest from the database.', e
         );
     });
 };
