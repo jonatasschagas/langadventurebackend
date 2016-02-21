@@ -52,51 +52,29 @@ module.exports.handler = function (event, context) {
             );
         });
     } else {
-        // first we check if there is a quest assigned to this order
-        db.listByGSI(
-            'Quest',
-            'ID, ' +
-            'Title',
-            'QuestOrder',
-            questOrder
-        ).then(
-            function (response) {
-                if (response && response.Items.length > 0) {
-                    utils.error(
-                        context,
-                        'Quest',
-                        'saved',
-                        'A Quest is already assigned to this order. ' +
-                        'Please check the order before registering a Quest.',
-                        null
-                    );
-                    return;
-                } else {
-                    db.save('Quest', {
-                        'ID': db.guid(),
-                        'QuestOrder': questOrder,
-                        'Title': title,
-                        'Introduction': introduction,
-                        'IntroductionTranslation': introductionTranslation,
-                        'Completion': completion,
-                        'CompletionTranslation': completionTranslation,
-                        'StoryId': storyId,
-                        'CreatedDate': now.toDateString(),
-                        'LastUpdated': now.toDateString()
-                    }).then(function (response) {
-                        utils.log('Quest has been saved successfully.', response);
-                        utils.success(context, 'Quest', 'saved', {});
-                    }).catch(function (e) {
-                        utils.error(
-                            context,
-                            'Quest',
-                            'saved',
-                            'Error saving the quest in the database.',
-                            e
-                        );
-                    });
-                }
-            }
-        );
+
+        db.save('Quest', {
+            'ID': db.guid(),
+            'QuestOrder': questOrder,
+            'Title': title,
+            'Introduction': introduction,
+            'IntroductionTranslation': introductionTranslation,
+            'Completion': completion,
+            'CompletionTranslation': completionTranslation,
+            'StoryId': storyId,
+            'CreatedDate': now.toDateString(),
+            'LastUpdated': now.toDateString()
+        }).then(function (response) {
+            utils.log('Quest has been saved successfully.', response);
+            utils.success(context, 'Quest', 'saved', {});
+        }).catch(function (e) {
+            utils.error(
+                context,
+                'Quest',
+                'saved',
+                'Error saving the quest in the database.',
+                e
+            );
+        });
     }
 };
