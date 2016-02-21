@@ -21,8 +21,9 @@ module.exports.handler = function (event, context) {
             'NpcId,' +
             'QuestId,' +
             'Nodes,' +
-            'CreatedDate',
+            'CreatedDate,'+
             'QuestCompletion',
+            'QuestId',
             questId).then(
             function (response) {
                 utils.log('Listing dialogs: ', response);

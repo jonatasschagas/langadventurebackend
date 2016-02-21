@@ -48,12 +48,35 @@ module.exports.handler = function (event, context) {
             }
         );
     } else {
-        utils.error(
-            context,
-            'Quest',
-            'list',
-            'Please provide a story Id in order to list the quests.',
-            null
+        db.list('Quest',
+            'ID,' +
+            'Title,' +
+            'Introduction,' +
+            'IntroductionTranslation,' +
+            'Completion,' +
+            'CompletionTranslation,' +
+            'QuestOrder,' +
+            'CreatedDate',
+            'StoryId').then(
+            function (response) {
+                utils.log('Listing quests: ', response);
+                utils.success(
+                    context,
+                    'Quests',
+                    'listed',
+                    {'items': response.Items}
+                );
+            }
+        ).catch(
+            function (e) {
+                utils.error(
+                    context,
+                    'Quests',
+                    'listed',
+                    'Error fetching quests from database.',
+                    e
+                );
+            }
         );
     }
 };

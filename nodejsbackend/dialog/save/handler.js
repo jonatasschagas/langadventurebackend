@@ -58,7 +58,7 @@ module.exports.handler = function (event, context) {
             'LastUpdated': now.toDateString(),
             'Nodes': nodes
         }).then(function () {
-            utils.success(context, 'Dialog', 'saving', {});
+            utils.success(context, 'Dialog', 'saved', {});
         }).catch(function (e) {
             utils.error(
                 context,

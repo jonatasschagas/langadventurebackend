@@ -52,7 +52,6 @@ module.exports.handler = function (event, context) {
             );
         });
     } else {
-
         db.save('Quest', {
             'ID': db.guid(),
             'QuestOrder': questOrder,
