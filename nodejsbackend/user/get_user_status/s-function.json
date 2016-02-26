@@ -1,6 +1,6 @@
 {
-  "name": "list",
-  "handler": "quest/list/handler.handler",
+  "name": "get_user_status",
+  "handler": "user/get_user_status/handler.handler",
   "timeout": 6,
   "memorySize": 1024,
   "custom": {
@@ -9,14 +9,14 @@
   },
   "endpoints": [
     {
-      "path": "quest/list",
+      "path": "user/get_user_status",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": "{\"storyId\": \"$input.params().querystring.get('storyId')\"}"
+        "application/json": "{\"deviceId\": \"$input.params().querystring.get('deviceId')\"}"
       },
       "responses": {
         "400": {

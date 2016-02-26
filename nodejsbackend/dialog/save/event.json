@@ -1,47 +1,126 @@
 {
-  "title": "Level1/Greeting/Dialog",
-  "storyId": "7a6bda0e-0d4d-6c71-ea25-5942a464c8a4",
-  "whoStarts": "player",
+  "id": "2f071b77-c3c0-d71b-7afd-43ec12b9b5c0",
+  "npcId": "69b0b859-a947-649f-5250-d14ea6eac184",
+  "questId": "dd3d1309-bd90-48df-22fb-3ffa8ba35660",
+  "questCompletion": true,
   "nodes": [
     {
-      "title": "Hello There!",
-      "translation": "Ola!",
-      "nodes": [
+      "id": "58901521-49bd-0f0a-729a-4fea154aa096",
+      "text": "Hello there! I haven't seen you before. Since this is a small town, we know instantly when someone is visiting us :) Did you come here to visit someone?",
+      "$$hashKey": "object:75",
+      "translation": "",
+      "answers": [
         {
-          "title": "Hi! How are you?",
-          "translation": "Oi! Tudo bem?",
-          "nodes": [
+          "id": "d413f9f2-a386-51ee-0c73-e1f4acae101b",
+          "text": "Hi! Yes! I came to visit my old friend.",
+          "$$hashKey": "object:54",
+          "translation": "",
+          "next": [
             {
-              "title": "I'm fine thanks! How about you?",
-              "translation": "Estou bem, obrigado. E você? Como vai?",
-              "nodes": [
+              "id": "e8338211-b794-cbc5-fbf0-dec68d919d2e",
+              "parent": "d413f9f2-a386-51ee-0c73-e1f4acae101b",
+              "text": "Alright! So, who's your friend?",
+              "translation": "",
+              "type": "question",
+              "answers": [
                 {
-                  "title": "I'm fine too. What are the news?",
-                  "translation": "Estou bem tambem. E ai? Novidades?",
-                  "nodes": [],
-                  "$$hashKey": "object:187"
+                  "id": "2450bf7c-9077-f1d0-b4b5-abe356735de6",
+                  "text": "Hi name is Howard, do you know him?",
+                  "$$hashKey": "object:181",
+                  "translation": "",
+                  "next": [
+                    {
+                      "id": "e5b1f3e2-817a-2fe9-9553-3daa95bc0a28",
+                      "parent": "2450bf7c-9077-f1d0-b4b5-abe356735de6",
+                      "text": "Yes! He's quite popular around here. If you're looking for him, he will probably be at the post office right now since he works there. Do you know where the post office is?",
+                      "translation": "",
+                      "type": "question",
+                      "answers": [
+                        {
+                          "id": "239691a1-c2f8-2d05-ffc4-9f6d8061c121",
+                          "type": "answer",
+                          "$$hashKey": "object:327",
+                          "text": "Yes, I do. Thanks for the information.",
+                          "next": [
+                            {
+                              "id": "2567b09e-ae33-194a-4f4f-581ebde87052",
+                              "parent": "239691a1-c2f8-2d05-ffc4-9f6d8061c121",
+                              "text": "No problem :) I'll see you around!",
+                              "translation": null,
+                              "type": "question",
+                              "answers": [],
+                              "$$hashKey": "object:422"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "8b16eafa-39af-43d7-91dc-0fffd34ede54",
+                          "type": "answer",
+                          "$$hashKey": "object:343",
+                          "text": "No, I don't. Where is it?",
+                          "next": [
+                            {
+                              "id": "baadfa6f-dd08-0588-a13a-907691734ac3",
+                              "parent": "8b16eafa-39af-43d7-91dc-0fffd34ede54",
+                              "text": "The Post office is at the end of this street. Just go ahead and it should be on the right side. Let me know if you need any other help. I'll see you around!",
+                              "translation": null,
+                              "type": "question",
+                              "answers": [],
+                              "$$hashKey": "object:466"
+                            }
+                          ]
+                        }
+                      ],
+                      "$$hashKey": "object:360"
+                    }
+                  ],
+                  "type": "answer"
+                },
+                {
+                  "id": "f49cd746-6cf6-0820-4151-b90ab044c4e9",
+                  "text": "I'm not sure about telling you that. I'm sorry.",
+                  "$$hashKey": "object:191",
+                  "translation": "",
+                  "next": [
+                    {
+                      "id": "6d945931-6598-fe3e-25c9-951919f1315b",
+                      "parent": "f49cd746-6cf6-0820-4151-b90ab044c4e9",
+                      "text": "Oh, I'm sorry. I didn't mean to be nosy... In any case, have a good day sir!",
+                      "translation": "",
+                      "type": "question",
+                      "answers": [],
+                      "$$hashKey": "object:513"
+                    }
+                  ],
+                  "type": "answer"
                 }
               ],
-              "$$hashKey": "object:168"
-            },
-            {
-              "title": "Not so good. I've been a bit tired lately.",
-              "translation": "Mais ou menos. Ultimamente estou me sentindo cansado.",
-              "nodes": [
-                {
-                  "title": "Why have you been tired? Too much work?",
-                  "translation": "Porque voce esta cansado? Tens trabalhado muito?",
-                  "nodes": [],
-                  "$$hashKey": "object:199"
-                }
-              ],
-              "$$hashKey": "object:176"
+              "$$hashKey": "object:247"
             }
           ],
-          "$$hashKey": "object:149"
+          "type": "answer"
+        },
+        {
+          "id": "8b800709-bca8-73bb-cd0a-5bb9cf195a5e",
+          "text": "Hi! No, I just ended up here accidentally.",
+          "$$hashKey": "object:64",
+          "translation": "",
+          "type": "answer",
+          "next": [
+            {
+              "id": "3437f701-6867-cc96-805f-37e4bc122b1c",
+              "parent": "8b800709-bca8-73bb-cd0a-5bb9cf195a5e",
+              "text": "That's odd. This town is so in the middle of nowhere that I'd hardly believe that anyone would come here by accident. Well, it's none of my business... In any case, have a nice day!",
+              "translation": null,
+              "type": "question",
+              "answers": [],
+              "$$hashKey": "object:557"
+            }
+          ]
         }
       ],
-      "$$hashKey": "object:110"
+      "parent": null,
+      "type": "question"
     }
   ]
 }

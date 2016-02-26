@@ -29,22 +29,11 @@ module.exports.handler = function (event, context) {
             storyId).then(
             function (response) {
                 utils.log('Listing quests: ', response);
-                utils.success(
-                    context,
-                    'Quests',
-                    'listed',
-                    {'items': response.Items}
-                );
+                utils.success(context, 'Quests', 'listed', {'items': response.Items});
             }
         ).catch(
             function (e) {
-                utils.error(
-                    context,
-                    'Quests',
-                    'listed',
-                    'Error fetching quests from database.',
-                    e
-                );
+                utils.error(context, 'Quests', 'listed', 'Error fetching quests from database.', e);
             }
         );
     } else {
@@ -60,22 +49,11 @@ module.exports.handler = function (event, context) {
             'StoryId').then(
             function (response) {
                 utils.log('Listing quests: ', response);
-                utils.success(
-                    context,
-                    'Quests',
-                    'listed',
-                    {'items': response.Items}
-                );
+                utils.success(context, 'Quests', 'listed', {'items': response.Items});
             }
         ).catch(
             function (e) {
-                utils.error(
-                    context,
-                    'Quests',
-                    'listed',
-                    'Error fetching quests from database.',
-                    e
-                );
+                utils.error(context, 'Quests', 'listed', 'Error fetching quests from database.', e);
             }
         );
     }
